@@ -1,0 +1,856 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profissão Secreta | Modo Desafio</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    color: white;
+    background:
+        radial-gradient(circle at top left, #45318c, transparent 40%),
+        linear-gradient(135deg, #080d20, #171b3f, #321d59);
+}
+
+.game {
+    width: 100%;
+    max-width: 720px;
+    padding: 28px;
+    background: rgba(15, 19, 43, .97);
+    border: 1px solid #454773;
+    border-radius: 25px;
+    box-shadow: 0 25px 70px #0007;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.logo {
+    font-size: 55px;
+    margin-bottom: 10px;
+}
+
+h1 {
+    font-size: clamp(27px, 5vw, 39px);
+    line-height: 1.2;
+    margin-bottom: 14px;
+}
+
+h1 span {
+    color: #ffd166;
+}
+
+p {
+    line-height: 1.6;
+}
+
+.subtitle {
+    color: #c5c8e9;
+    margin-bottom: 24px;
+}
+
+.badge {
+    display: inline-block;
+    background: #34315d;
+    color: #ffd166;
+    padding: 8px 13px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+}
+
+.rules {
+    background: #202546;
+    border: 1px solid #3a406a;
+    border-radius: 17px;
+    padding: 18px;
+    text-align: left;
+    line-height: 2;
+    margin: 20px 0;
+    color: #e0e2fa;
+}
+
+.main-btn, .secondary-btn, .answer {
+    font-family: inherit;
+    cursor: pointer;
+    font-weight: bold;
+    transition: .2s;
+}
+
+.main-btn {
+    width: 100%;
+    padding: 17px;
+    color: #201631;
+    background: linear-gradient(90deg, #ffe083, #ffb547);
+    border: 0;
+    border-radius: 13px;
+    font-size: 16px;
+}
+
+.main-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.secondary-btn {
+    width: 100%;
+    margin-top: 12px;
+    padding: 13px;
+    background: #292d51;
+    color: white;
+    border: 1px solid #484d79;
+    border-radius: 12px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.stat {
+    background: #252949;
+    border-radius: 13px;
+    padding: 12px 5px;
+    font-size: 12px;
+    color: #c9cbea;
+}
+
+.stat strong {
+    display: block;
+    margin-top: 7px;
+    color: #ffd166;
+    font-size: 21px;
+}
+
+.levels {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+    margin-bottom: 20px;
+}
+
+.level {
+    padding: 10px 3px;
+    border-radius: 10px;
+    background: #242744;
+    color: #aeb1d1;
+    font-size: 12px;
+    border: 1px solid #373b61;
+}
+
+.level.active {
+    background: #48356f;
+    color: #ffe083;
+    border-color: #ffd166;
+}
+
+.progress {
+    height: 8px;
+    background: #2c3052;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 22px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #00e5b1, #ffd166);
+    transition: width .3s;
+}
+
+.card {
+    padding: 23px 16px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #292d59, #35306b);
+    border: 1px solid #4a4f82;
+    margin-bottom: 18px;
+}
+
+.question-number {
+    color: #ffd166;
+    font-size: 12px;
+    letter-spacing: 2px;
+    font-weight: bold;
+}
+
+.emojis {
+    font-size: clamp(42px, 9vw, 66px);
+    line-height: 1.6;
+    margin: 18px 0;
+    overflow-wrap: anywhere;
+}
+
+.question {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.hint {
+    color: #c6c8e6;
+    font-size: 14px;
+}
+
+.timer-box {
+    margin: 15px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    color: #ffe083;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.timer-box.urgent {
+    color: #ff758b;
+    animation: pulse .6s infinite alternate;
+}
+
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.06); }
+}
+
+.answers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 11px;
+}
+
+.answer {
+    min-height: 65px;
+    padding: 12px 8px;
+    color: white;
+    background: #292d53;
+    border: 2px solid #444a77;
+    border-radius: 13px;
+    font-size: 15px;
+}
+
+.answer:hover:not(:disabled) {
+    background: #414777;
+    border-color: #ffd166;
+    transform: translateY(-2px);
+}
+
+.answer:disabled {
+    cursor: default;
+    opacity: .9;
+}
+
+.answer.correct {
+    background: #08785e;
+    border-color: #40efba;
+}
+
+.answer.wrong {
+    background: #91304c;
+    border-color: #ff7894;
+}
+
+.feedback {
+    min-height: 55px;
+    margin: 18px 0 8px;
+    line-height: 1.5;
+    font-weight: bold;
+}
+
+.footer {
+    margin-top: 20px;
+    color: #8f94bb;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.result-emoji {
+    font-size: 72px;
+    margin: 20px 0;
+}
+
+.result-score {
+    color: #ffd166;
+    font-size: 48px;
+    font-weight: bold;
+    margin: 12px 0;
+}
+
+.result-message {
+    color: #d8daf4;
+    margin-bottom: 20px;
+}
+
+.result-details {
+    background: #232746;
+    border-radius: 14px;
+    padding: 16px;
+    text-align: left;
+    line-height: 2;
+    margin: 20px 0;
+}
+
+@media (max-width: 450px) {
+    .game {
+        padding: 19px 13px;
+    }
+
+    .answer {
+        font-size: 13px;
+    }
+
+    .stats {
+        gap: 6px;
+    }
+}
+</style>
+</head>
+
+<body>
+<main class="game">
+
+    <!-- MENU -->
+    <section id="startScreen">
+        <div class="logo">🧠🎯</div>
+        <div class="badge">EDIÇÃO ESPECIAL • MODO DESAFIO</div>
+
+        <h1>PROFISSÃO <span>SECRETA</span></h1>
+
+        <p class="subtitle">
+            Os emojis escondem profissões. As alternativas
+            podem parecer semelhantes, e o tempo está passando.
+            Você consegue chegar ao nível especialista?
+        </p>
+
+        <div class="rules">
+            🟢 <strong>Nível 1:</strong> 5 charadas • 10 pontos por acerto<br>
+            🟠 <strong>Nível 2:</strong> 5 charadas • 20 pontos por acerto<br>
+            🔴 <strong>Nível 3:</strong> 5 charadas • 30 pontos por acerto<br>
+            ⏱️ <strong>15 segundos</strong> para cada resposta<br>
+            ❤️ <strong>3 vidas</strong> para a partida inteira<br>
+            🏆 <strong>Até 300 pontos</strong> no total
+        </div>
+
+        <button class="main-btn" id="startBtn">
+            🚀 INICIAR DESAFIO
+        </button>
+
+        <p class="footer">PENSE RÁPIDO. INTERPRETE OS EMOJIS. ACERTE!</p>
+    </section>
+
+    <!-- JOGO -->
+    <section id="gameScreen" class="hidden">
+        <h1>🧩 Desafio das <span>Profissões</span></h1>
+
+        <div class="stats">
+            <div class="stat">
+                CHARADA
+                <strong id="count">1/15</strong>
+            </div>
+            <div class="stat">
+                PONTUAÇÃO
+                <strong id="score">0</strong>
+            </div>
+            <div class="stat">
+                VIDAS
+                <strong id="lives">❤️❤️❤️</strong>
+            </div>
+        </div>
+
+        <div class="levels">
+            <div class="level active" id="level1">🟢 INICIANTE</div>
+            <div class="level" id="level2">🟠 INTERMEDIÁRIO</div>
+            <div class="level" id="level3">🔴 ESPECIALISTA</div>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="card">
+            <div class="question-number" id="questionNumber">
+                NÍVEL 1 • CHARADA 01
+            </div>
+
+            <div class="emojis" id="emojiClue">🔬🧬🧫</div>
+
+            <p class="question" id="questionText">
+                Que profissão os emojis representam?
+            </p>
+
+            <p class="hint">
+                Interprete a combinação e escolha com atenção.
+            </p>
+        </div>
+
+        <div class="timer-box" id="timerBox">
+            ⏱️ TEMPO: <span id="timer">15</span>s
+        </div>
+
+        <div class="answers" id="answers"></div>
+
+        <div class="feedback" id="feedback" aria-live="polite">
+            Escolha uma alternativa!
+        </div>
+
+        <button class="main-btn hidden" id="nextBtn">
+            PRÓXIMA CHARADA ➜
+        </button>
+
+        <button class="secondary-btn" id="quitBtn">
+            ↩ Sair do desafio
+        </button>
+    </section>
+
+    <!-- RESULTADO -->
+    <section id="resultScreen" class="hidden">
+        <div class="logo">🏆</div>
+        <h1 id="resultTitle">DESAFIO <span>FINALIZADO!</span></h1>
+
+        <div class="result-emoji" id="resultEmoji">🎉</div>
+
+        <p>Sua pontuação:</p>
+        <div class="result-score" id="finalScore">0</div>
+        <p id="resultMessage" class="result-message"></p>
+
+        <div class="result-details" id="resultDetails"></div>
+
+        <button class="main-btn" id="restartBtn">
+            🔄 JOGAR NOVAMENTE
+        </button>
+
+        <button class="secondary-btn" id="menuBtn">
+            🏠 VOLTAR AO MENU
+        </button>
+    </section>
+
+</main>
+
+<script>
+"use strict";
+
+// 15 charadas divididas em 3 níveis.
+const questions = [
+    // NÍVEL 1 — 10 pontos
+    {
+        emoji: "🔬 🧬 🧫",
+        text: "Quem estuda organismos, células e material genético?",
+        options: ["Biólogo", "Geólogo", "Astrônomo", "Arqueólogo"],
+        answer: "Biólogo",
+        level: 1
+    },
+    {
+        emoji: "📐 🏢 📏",
+        text: "Quem planeja edifícios e espaços construídos?",
+        options: ["Engenheiro civil", "Arquiteto", "Topógrafo", "Decorador"],
+        answer: "Arquiteto",
+        level: 1
+    },
+    {
+        emoji: "⚖️ 📚 🏛️",
+        text: "Quem representa clientes e atua na defesa jurídica?",
+        options: ["Juiz", "Promotor", "Advogado", "Diplomata"],
+        answer: "Advogado",
+        level: 1
+    },
+    {
+        emoji: "🌱 🌾 🚜",
+        text: "Quem trabalha com o cultivo da terra e a produção agrícola?",
+        options: ["Agricultor", "Veterinário", "Paisagista", "Meteorologista"],
+        answer: "Agricultor",
+        level: 1
+    },
+    {
+        emoji: "🦷 🩻 🪥",
+        text: "Qual profissional é especializado na saúde bucal?",
+        options: ["Fonoaudiólogo", "Dentista", "Enfermeiro", "Farmacêutico"],
+        answer: "Dentista",
+        level: 1
+    },
+
+    // NÍVEL 2 — 20 pontos
+    {
+        emoji: "🧠 🗣️ 🛋️",
+        text: "Quem estuda o comportamento e os processos mentais?",
+        options: ["Psiquiatra", "Psicólogo", "Pedagogo", "Neurologista"],
+        answer: "Psicólogo",
+        level: 2
+    },
+    {
+        emoji: "🗺️ 🛰️ 📊",
+        text: "Quem analisa o espaço geográfico e suas transformações?",
+        options: ["Geólogo", "Cartógrafo", "Geógrafo", "Urbanista"],
+        answer: "Geógrafo",
+        level: 2
+    },
+    {
+        emoji: "🧾 📈 💰",
+        text: "Quem registra e analisa as contas e demonstrações financeiras de uma organização?",
+        options: ["Economista", "Contador", "Administrador", "Auditor fiscal"],
+        answer: "Contador",
+        level: 2
+    },
+    {
+        emoji: "🌦️ 🛰️ 🌡️",
+        text: "Quem estuda a atmosfera e produz previsões do tempo?",
+        options: ["Climatologista", "Oceanógrafo", "Meteorologista", "Geofísico"],
+        answer: "Meteorologista",
+        level: 2
+    },
+    {
+        emoji: "🎙️ 📰 📡",
+        text: "Quem apura informações e produz notícias para o público?",
+        options: ["Publicitário", "Jornalista", "Relações-públicas", "Editor de vídeo"],
+        answer: "Jornalista",
+        level: 2
+    },
+
+    // NÍVEL 3 — 30 pontos
+    {
+        emoji: "🧫 🧪 💊",
+        text: "Quem pesquisa e desenvolve formulações de medicamentos em laboratório?",
+        options: ["Farmacêutico", "Biomédico", "Químico", "Toxicologista"],
+        answer: "Farmacêutico",
+        level: 3
+    },
+    {
+        emoji: "🦴 🩻 🏃",
+        text: "Quem avalia e trata problemas de movimento e funções físicas por meio de exercícios terapêuticos?",
+        options: ["Ortopedista", "Fisioterapeuta", "Educador físico", "Quiroprático"],
+        answer: "Fisioterapeuta",
+        level: 3
+    },
+    {
+        emoji: "🌊 🐠 🧪",
+        text: "Quem investiga os oceanos, seus organismos e suas características?",
+        options: ["Biólogo marinho", "Oceanógrafo", "Engenheiro de pesca", "Ecólogo"],
+        answer: "Oceanógrafo",
+        level: 3
+    },
+    {
+        emoji: "🏺 🦴 ⛏️",
+        text: "Quem estuda sociedades do passado por meio de vestígios materiais?",
+        options: ["Historiador", "Paleontólogo", "Arqueólogo", "Antropólogo"],
+        answer: "Arqueólogo",
+        level: 3
+    },
+    {
+        emoji: "🖥️ 🔐 🌐",
+        text: "Quem identifica vulnerabilidades e protege sistemas digitais contra ataques?",
+        options: [
+            "Desenvolvedor web",
+            "Analista de cibersegurança",
+            "Designer de interfaces",
+            "Administrador de redes"
+        ],
+        answer: "Analista de cibersegurança",
+        level: 3
+    }
+];
+
+const $ = id => document.getElementById(id);
+
+const startScreen = $("startScreen");
+const gameScreen = $("gameScreen");
+const resultScreen = $("resultScreen");
+
+let current = 0;
+let score = 0;
+let lives = 3;
+let correct = 0;
+let timer = 15;
+let timerId = null;
+let answered = false;
+let roundQuestions = [];
+
+function showScreen(screen) {
+    startScreen.classList.add("hidden");
+    gameScreen.classList.add("hidden");
+    resultScreen.classList.add("hidden");
+    screen.classList.remove("hidden");
+}
+
+function shuffle(array) {
+    const result = [...array];
+
+    for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+    }
+
+    return result;
+}
+
+function startGame() {
+    clearInterval(timerId);
+
+    roundQuestions = shuffle(questions);
+    current = 0;
+    score = 0;
+    lives = 3;
+    correct = 0;
+    answered = false;
+
+    showScreen(gameScreen);
+    renderQuestion();
+}
+
+function updateStats() {
+    $("count").textContent = `${current + 1}/15`;
+    $("score").textContent = score;
+    $("lives").textContent =
+        "❤️".repeat(lives) + "🖤".repeat(3 - lives);
+
+    $("progressBar").style.width =
+        `${(current / roundQuestions.length) * 100}%`;
+}
+
+function renderQuestion() {
+    clearInterval(timerId);
+
+    if (lives <= 0 || current >= roundQuestions.length) {
+        endGame();
+        return;
+    }
+
+    answered = false;
+
+    const q = roundQuestions[current];
+
+    updateStats();
+
+    $("questionNumber").textContent =
+        `NÍVEL ${q.level} • CHARADA ${String(current + 1).padStart(2, "0")}`;
+
+    $("emojiClue").textContent = q.emoji;
+    $("questionText").textContent = q.text;
+    $("feedback").textContent = "Escolha a resposta antes que o tempo acabe!";
+    $("feedback").style.color = "#d8daf4";
+    $("nextBtn").classList.add("hidden");
+    $("timerBox").classList.remove("urgent");
+    $("answers").innerHTML = "";
+
+    [1, 2, 3].forEach(level => {
+        $("level" + level).classList.toggle("active", level === q.level);
+    });
+
+    shuffle(q.options).forEach(option => {
+        const btn = document.createElement("button");
+
+        btn.type = "button";
+        btn.className = "answer";
+        btn.textContent = option;
+
+        btn.addEventListener("click", () => {
+            checkAnswer(option, btn);
+        });
+
+        $("answers").appendChild(btn);
+    });
+
+    startTimer();
+}
+
+function startTimer() {
+    timer = 15;
+    $("timer").textContent = timer;
+
+    timerId = setInterval(() => {
+        if (answered) {
+            clearInterval(timerId);
+            return;
+        }
+
+        timer--;
+        $("timer").textContent = timer;
+
+        if (timer <= 5) {
+            $("timerBox").classList.add("urgent");
+        }
+
+        if (timer <= 0) {
+            clearInterval(timerId);
+            timeOut();
+        }
+    }, 1000);
+}
+
+function lockAnswers() {
+    $("answers").querySelectorAll("button").forEach(btn => {
+        btn.disabled = true;
+    });
+}
+
+function checkAnswer(selected, selectedButton) {
+    if (answered) return;
+
+    answered = true;
+    clearInterval(timerId);
+
+    const q = roundQuestions[current];
+    const buttons = $("answers").querySelectorAll(".answer");
+
+    lockAnswers();
+
+    buttons.forEach(btn => {
+        if (btn.textContent === q.answer) {
+            btn.classList.add("correct");
+        }
+    });
+
+    if (selected === q.answer) {
+        // Pontos do nível + bônus de velocidade.
+        const basePoints = q.level * 10;
+        const speedBonus = Math.floor(timer / 5) * 2;
+
+        const earned = basePoints + speedBonus;
+
+        score += earned;
+        correct++;
+
+        $("feedback").textContent =
+            `🎉 Correto! +${earned} pontos (${basePoints} + bônus de tempo).`;
+        $("feedback").style.color = "#45efba";
+    } else {
+        selectedButton.classList.add("wrong");
+        lives--;
+
+        $("feedback").textContent =
+            `❌ Resposta correta: ${q.answer}. Você perdeu uma vida.`;
+        $("feedback").style.color = "#ff8098";
+    }
+
+    updateStats();
+    $("lives").textContent =
+        "❤️".repeat(lives) + "🖤".repeat(3 - lives);
+
+    $("progressBar").style.width =
+        `${((current + 1) / roundQuestions.length) * 100}%`;
+
+    $("nextBtn").textContent =
+        lives <= 0 || current === roundQuestions.length - 1
+        ? "VER RESULTADO 🏆"
+        : "PRÓXIMA CHARADA ➜";
+
+    $("nextBtn").classList.remove("hidden");
+}
+
+function timeOut() {
+    if (answered) return;
+
+    answered = true;
+    lives--;
+
+    const q = roundQuestions[current];
+
+    lockAnswers();
+
+    $("answers").querySelectorAll(".answer").forEach(btn => {
+        if (btn.textContent === q.answer) {
+            btn.classList.add("correct");
+        }
+    });
+
+    $("feedback").textContent =
+        `⏰ Tempo esgotado! A resposta era: ${q.answer}.`;
+    $("feedback").style.color = "#ff8098";
+
+    $("lives").textContent =
+        "❤️".repeat(lives) + "🖤".repeat(3 - lives);
+
+    $("progressBar").style.width =
+        `${((current + 1) / roundQuestions.length) * 100}%`;
+
+    $("nextBtn").textContent =
+        lives <= 0 || current === roundQuestions.length - 1
+        ? "VER RESULTADO 🏆"
+        : "PRÓXIMA CHARADA ➜";
+
+    $("nextBtn").classList.remove("hidden");
+}
+
+function nextQuestion() {
+    if (!answered) return;
+
+    clearInterval(timerId);
+    current++;
+
+    if (lives <= 0 || current >= roundQuestions.length) {
+        endGame();
+    } else {
+        renderQuestion();
+    }
+}
+
+function endGame() {
+    clearInterval(timerId);
+    showScreen(resultScreen);
+
+    $("finalScore").textContent = score;
+    $("resultDetails").innerHTML = `
+        <strong>📊 Seu desempenho</strong><br>
+        ✅ Respostas corretas: ${correct} de 15<br>
+        ❌ Respostas erradas ou não respondidas: ${15 - correct}<br>
+        ⭐ Pontuação: ${score}<br>
+        🎯 Aproveitamento: ${Math.round(correct / 15 * 100)}%
+    `;
+
+    if (correct === 15) {
+        $("resultEmoji").textContent = "👑";
+        $("resultTitle").innerHTML = 'VOCÊ É UM <span>GÊNIO!</span>';
+        $("resultMessage").textContent =
+            "Incrível! Você decifrou todas as profissões. " +
+            "Sua atenção e interpretação estão em outro nível!";
+    } else if (correct >= 11) {
+        $("resultEmoji").textContent = "🏆";
+        $("resultTitle").innerHTML = 'NÍVEL <span>EXPERT!</span>';
+        $("resultMessage").textContent =
+            "Excelente resultado! Você demonstrou grande conhecimento. " +
+            "Tente novamente para acertar todas.";
+    } else if (correct >= 7) {
+        $("resultEmoji").textContent = "🔥";
+        $("resultTitle").innerHTML = 'MUITO <span>BOM!</span>';
+        $("resultMessage").textContent =
+            "Você está evoluindo! Observe melhor as pistas " +
+            "e tente superar sua pontuação na próxima partida.";
+    } else {
+        $("resultEmoji").textContent = "🚀";
+        $("resultTitle").innerHTML = 'CONTINUE <span>TENTANDO!</span>';
+        $("resultMessage").textContent =
+            "Esse desafio exige atenção e raciocínio. " +
+            "Jogue outra vez e tente avançar ainda mais!";
+    }
+}
+
+function goHome() {
+    clearInterval(timerId);
+    showScreen(startScreen);
+}
+
+$("startBtn").addEventListener("click", startGame);
+$("nextBtn").addEventListener("click", nextQuestion);
+$("restartBtn").addEventListener("click", startGame);
+$("menuBtn").addEventListener("click", goHome);
+$("quitBtn").addEventListener("click", goHome);
+</script>
+</body>
+</html>
